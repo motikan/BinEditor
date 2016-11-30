@@ -3,6 +3,7 @@
 import wx
 import ctypes
 import wx.grid as wxgrid
+import struct
 from enum import Enum
 from wx.py import dispatcher
 from search_types import SEARCH_TYPES
@@ -74,9 +75,7 @@ class HexGridTable(wx.grid.PyGridTableBase):
         if addr == self.length:  # append one byte
             self.InsertRange(self.length, value)
         else:  # change one byte
-            print(value.encode())
-            print(self.buffer[0:])
-            self.buffer[addr] = value.encode()
+            self.buffer[addr] = value
         self._string = None  # reset string
         return True
 
@@ -164,8 +163,8 @@ class HexGridTable(wx.grid.PyGridTableBase):
             pass
         else:
             addr = row * self.hex_cols + col
-
-            value = chr(int(value, 16))
+            value = struct.pack('B', int(value, 16))
+            #value = chr(int("6c", 16))
 
             attr = self.GetAttr(row, col)
             saved_val = self._get_value_by_addr(addr)
