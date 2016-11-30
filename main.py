@@ -1,9 +1,9 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
 import re
 import sys
 import wx
-#from wx.py import dispatcher
 import wx.lib.agw.genericmessagedialog as gmd
 from hex_editor import HexEditor
 from hex_grid_table import HexGridTable

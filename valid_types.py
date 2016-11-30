@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from enum import Enum
+from hex_enum import Enum
 
 
 class VALID_TYPES(Enum):

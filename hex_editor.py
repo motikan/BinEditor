@@ -177,7 +177,6 @@ class HexEditor(wx.Panel):
                 ("New", lambda e: self.NewDialog()),
                 ("Load", lambda e: self.OpenFileDialog()),
                 ("Save", lambda e: self.SaveFileDialog()),
-                ("Calculator", lambda e: os.startfile("calc.exe")),
             ]
         else:
             items = [
