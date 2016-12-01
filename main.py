@@ -18,36 +18,30 @@ if sys.version_info[:2] < (2, 7):
     else:
       return bin(number / 2) + str(number % 2)
 
-if __name__ == '__main__':
+class HexEditorFrame(wx.Frame):
 
-  class HexEditorFrame(wx.Frame):
+  def __init__(self, parent):
+    wx.Frame.__init__(self, id=-1, name='',
+      parent=parent, title="HexEditor", size=(720, 700))
+    sizer = wx.BoxSizer(wx.VERTICAL)
 
-    def __init__(self, parent):
-      wx.Frame.__init__(self, id=-1, name='',
-        parent=parent, title="HexEditor", size=(720, 700))
-      sizer = wx.BoxSizer(wx.VERTICAL)
+    self.editor = HexEditor(self)
 
-      self.editor = HexEditor(self)
+    sizer.Add(self.editor, 1, wx.EXPAND)
+    self.SetSizer(sizer)
 
-      sizer.Add(self.editor, 1, wx.EXPAND)
-      self.SetSizer(sizer)
+    self.CenterOnScreen()
 
-      self.CenterOnScreen()
+  def OpenFile(self, filename):
+      self.editor.LoadFile(filename)
 
-    def OpenFile(self, filename):
-        self.editor.LoadFile(filename)
+class HexEditorApp(wx.App):
 
-  class HexEditorApp(wx.App):
-
-    def OnInit(self):
-      self.mainFrame = HexEditorFrame(None)
-      self.mainFrame.Show()
-      self.SetTopWindow(self.mainFrame)
-      return True
-
-    def OpenFile(self, filename=''):
-      if filename:
-        self.mainFrame.OpenFile(filename)
+  def OnInit(self):
+    self.mainFrame = HexEditorFrame(None)
+    self.mainFrame.Show()
+    self.SetTopWindow(self.mainFrame)
+    return True
 
   def main(*args):
     application = HexEditorApp(None)
@@ -55,5 +49,17 @@ if __name__ == '__main__':
       application.OpenFile(filename=args[0][1])
       application.MainLoop()
 
-import sys
-main(sys.argv)
+  def OpenFile(self, filename=''):
+    if filename:
+      self.mainFrame.OpenFile(filename)
+
+# スクリプトから実行用
+def OpenEditor(input_filename):
+  application = HexEditorApp(None)
+  application.OpenFile(filename=input_filename)
+  application.MainLoop()
+
+# コマンドから実行用
+if __name__ == '__main__':
+  import sys
+  HexEditorApp.main(sys.argv)

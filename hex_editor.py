@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import wx
+import struct
 import wx.lib.agw.buttonpanel as btnpanel
 import wx.grid as wxgrid
 from transparent_text import TransparentText
@@ -429,6 +430,18 @@ class HexEditor(wx.Panel):
 
     def OnTransmissionButton(self, event):
       print("OnTransmissionButton")
+      
+      dlg = wx.MessageDialog(parent = None, message = u"終了します。よろしいですか？", caption = u"終了確認", style = wx.YES_NO)
+      result = dlg.ShowModal()
+      if result == wx.ID_YES:
+        table = self.grid.GetTable()
+        buf = table.test()
+        with open("data.bin", "wb") as fout:        
+            for x in buf:
+                print(repr(x))
+                fout.write(x)
+                #fout.write(struct.pack("B", x))
+        wx.Exit()
 
     def OnFindButton(self, event):
         event.Skip()

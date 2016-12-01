@@ -344,3 +344,6 @@ class HexGridTable(wx.grid.PyGridTableBase):
 
     def FindRegex(self, regex):
         return re.finditer(regex, self.String)
+
+    def test(self):
+        return self.buffer
