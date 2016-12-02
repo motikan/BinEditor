@@ -436,11 +436,9 @@ class HexEditor(wx.Panel):
       if result == wx.ID_YES:
         table = self.grid.GetTable()
         buf = table.test()
-        with open("data.bin", "wb") as fout:        
+        with open("log/data.bin", "wb") as fout:        
             for x in buf:
-                print(repr(x))
                 fout.write(x)
-                #fout.write(struct.pack("B", x))
         wx.Exit()
 
     def OnFindButton(self, event):

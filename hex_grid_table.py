@@ -150,9 +150,6 @@ class HexGridTable(wx.grid.PyGridTableBase):
             #row_values = ["%c" % val if 0x20 <= ord(val) <= 0x7E else "." for val in row_values if val]
             row_values = ["%c" % val if 0x20 <= val <= 0x7E else "." for val in row_values if val]
             
-            # debug
-            #print(row_values)
-            
             return "  " + "".join(row_values)
         else:
             val = self._get_value_by_row_col(row, col, 1)
