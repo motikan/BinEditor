@@ -2,11 +2,14 @@
 # -*- coding: utf-8 -*-
 import wx
 import ctypes
+import re
+import binascii
 import wx.grid as wxgrid
 import struct
 from enum import Enum
 from wx.py import dispatcher
 from search_types import SEARCH_TYPES
+
 
 class HexGridTable(wx.grid.PyGridTableBase):
     class Actions:
@@ -327,13 +330,16 @@ class HexGridTable(wx.grid.PyGridTableBase):
 
     def FindIter(self, text, find_type=SEARCH_TYPES.Hexadecimal):
         """ return a iter """
-        if find_type == SEARCH_TYPES.RegexText:
-            regex = text
-        elif find_type == SEARCH_TYPES.Hexadecimal:
+        if find_type == SEARCH_TYPES.Hexadecimal:
             text = binascii.a2b_hex(text)
             regex = re.escape(text)
+
         elif find_type == SEARCH_TYPES.NormalText:
-            regex = re.escape(text)
+            regex = re.escape(text).encode()
+
+        elif find_type == SEARCH_TYPES.RegexText:
+            regex = text.encode()
+
         else:
             raise Exception("unsupported search type")
 
@@ -342,5 +348,5 @@ class HexGridTable(wx.grid.PyGridTableBase):
     def FindRegex(self, regex):
         return re.finditer(regex, self.String)
 
-    def test(self):
+    def GetBuffer(self):
         return self.buffer

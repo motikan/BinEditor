@@ -2,14 +2,17 @@
 import os
 import wx
 import struct
+import re
 import wx.lib.agw.buttonpanel as btnpanel
 import wx.grid as wxgrid
+import wx.lib.agw.genericmessagedialog as gmd
 from transparent_text import TransparentText
 from number_validator import NumberValidator
 from valid_types import VALID_TYPES
 from search_types import SEARCH_TYPES
 from hex_grid_table import HexGridTable
 from bin_file_drop_target import BinFileDropTarget
+
 
 class HexEditor(wx.Panel):
 
@@ -24,16 +27,20 @@ class HexEditor(wx.Panel):
 
     def __init_ctrls(self, parent):
 
-        self.SetFont(wx.Font(9, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Courier New"))
+        self.SetFont(wx.Font(9, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, 
+            wx.FONTWEIGHT_NORMAL, False, "Courier New"))
 
         sizer = wx.BoxSizer(wx.VERTICAL)
 
+        # ツールバー
         self.toolbar = self.__init_toolbar()
         sizer.Add(self.toolbar, 0, wx.EXPAND)
 
+        # 検索バー
         self.find_bar = self.__init_find_bar()
         sizer.Add(self.find_bar, 0, wx.EXPAND)
 
+        # hexエディタ部分
         self._grid_selecting_start = False
         self._in_selecting = False
         self.grid = wxgrid.Grid(self, -1)
@@ -42,6 +49,7 @@ class HexEditor(wx.Panel):
         self._reset_grid()
         sizer.Add(self.grid, 1, wx.EXPAND)
 
+        # ステータスバー
         self.status_bar = self.__init_status_bar()
         sizer.Add(self.status_bar, 0, wx.EXPAND)
 
@@ -49,6 +57,7 @@ class HexEditor(wx.Panel):
 
         self.SetSizer(sizer)
 
+    # ツールバー
     def __init_toolbar(self):
         toolbar = btnpanel.ButtonPanel(self, -1, "", btnpanel.BP_DEFAULT_STYLE)
 
@@ -100,6 +109,7 @@ class HexEditor(wx.Panel):
         toolbar.DoLayout()
         return toolbar
 
+    # 検索バー
     def __init_find_bar(self):
         find_bar = btnpanel.ButtonPanel(self, -1, "", btnpanel.BP_DEFAULT_STYLE)
 
@@ -435,7 +445,7 @@ class HexEditor(wx.Panel):
       result = dlg.ShowModal()
       if result == wx.ID_YES:
         table = self.grid.GetTable()
-        buf = table.test()
+        buf = table.GetBuffer()
         with open("log/data.bin", "wb") as fout:        
             for x in buf:
                 fout.write(x)
@@ -444,6 +454,7 @@ class HexEditor(wx.Panel):
     def OnFindButton(self, event):
         event.Skip()
         text = self._find_text.GetValue()
+
         if not text:
             self._search_result = None
             return
@@ -460,7 +471,7 @@ class HexEditor(wx.Panel):
         if self._search_options.get("text") != options["text"] or\
             self._search_options.get("search_type") != options["search_type"] or\
                 self._search_result is None:
-                    # search options change, re-search
+
                     if options["search_type"] == SEARCH_TYPES.Hexadecimal:
                         text = re.sub(r'\s+', '', text)
 
@@ -472,7 +483,7 @@ class HexEditor(wx.Panel):
                         return
 
         try:
-            match = self._search_result.next()
+            match = self._search_result.__next__()
             start, end = match.span(0)
             self.SetSelection(start, end - start, True)
             self.grid.SetFocus()
